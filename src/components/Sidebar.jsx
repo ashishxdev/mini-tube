@@ -8,7 +8,7 @@ const Sidebar = () => {
   // Early Return pattern
   if(!isMenuOpen) return null;
   return (
-    <div className='p-5 shadow-lg w-48'>
+    <div className='p-5 shadow-lg w-55 min-h-screen fixed left-0 top-14'>
       <ul>
         <li> 
           <Link to="/">Home</Link>
