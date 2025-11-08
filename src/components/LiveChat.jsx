@@ -26,28 +26,33 @@ const LiveChat = () => {
 
   return (
     <>
-    <div className='ml-2 w-full h-[500px] p-2 border border-black bg-slate-100 rounded-t-lg overflow-y-scroll flex flex-col-reverse'>
+    <div className='ml-2 w-full'>
+    <div className='h-[450px] p-2 border bg-[#181818] rounded-t-lg overflow-y-scroll flex flex-col-reverse text-white'>
         <div>
         {/* Don't use Indexes as keys */}
-        {chatMessages.map((c,index) => 
-        <ChatMessage key={index}
+        {chatMessages.map((c) => 
+        <ChatMessage key={c.id}
         name={c.name} 
         message={c.message}/>)}
         </div>
     </div>
-    <form className='w-full p-2 ml-2 border border-black rounded-b-lg'
+    <form className='w-full p-2 border border-red rounded-b-lg bg-[#212121]'
     onSubmit={(e)=>{
         e.preventDefault();
         // console.log("ON Form Submit", liveMessage)
         dispatch(addMessage({
             name: "Aashish",
-            message: liveMessage
+            message: liveMessage,
+            id: Date.now()
         }))
+        setLiveMessage("")
     }}>
-        <input className="px-2 w-86 border border-black rounded-sm" type="text" value={liveMessage} 
+        <input className="px-2 w-86 border border-white rounded-sm bg-[#272727] text-white" type="text" value={liveMessage} 
         onChange={(e)=>{setLiveMessage(e.target.value)}}/>
-        <button className='px-2 bg-green-200 ml-2'>Send</button>
+        <button className='px-2 py-1 rounded-lg bg-[#272727] ml-2 text-white'
+        >Send</button>
     </form>
+    </div>
     </>
   )
 }

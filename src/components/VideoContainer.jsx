@@ -1,27 +1,37 @@
 import React, { useEffect, useState } from 'react'
 import { YOUTUBE_VIDEOS_API } from '../utils/constants'
-import VideoCard, { AdVideoCard } from './VideoCard'
+import VideoCard from './VideoCard'
 import { Link } from 'react-router-dom'
+import { useSelector } from "react-redux";
 
 const VideoContainer = () => {
+  const searchQuery = useSelector((store) => store.filter.searchQuery);
   const [videos, setVideos] = useState([])
+
   useEffect(() => {
     getVideos()
   }, [])
 
-  const getVideos= async() =>{
+  const getVideos = async () => {
     const data = await fetch(YOUTUBE_VIDEOS_API)
-    const json = await data.json();
-    console.log(json.items)
+    const json = await data.json()
     setVideos(json.items)
   }
 
+  const filteredVideos =
+    searchQuery?.trim()?.length > 0
+      ? videos.filter((video) =>
+          video?.snippet?.title?.toLowerCase().includes(searchQuery.toLowerCase())
+        )
+      : videos
+
   return (
     <div className='flex flex-wrap'>
-      {/* {videos[0] && <AdVideoCard info = {videos[0]}/>} */}
-      {videos.map((video) => (
-        <Link key={video.id} to={"/watch?v=" + video.id}><VideoCard info={video}/></Link>
-        ))}
+      {filteredVideos.map((video) => (
+        <Link key={video.id} to={`/watch?v=${video.id}`}>
+          <VideoCard info={video} />
+        </Link>
+      ))}
     </div>
   )
 }

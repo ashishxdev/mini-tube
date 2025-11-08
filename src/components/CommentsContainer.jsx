@@ -46,7 +46,7 @@ const commentsData = [
 
 const Comment  = ({data}) => {
     const { name, text, replies } = data;
-     return <div className='flex shadow-sm bg-gray-100 p-2 rounded-lg my-2'>
+     return <div className='flex shadow-sm bg-[#1f1f1f] p-3 rounded-lg my-2 text-gray-200'>
         <img 
         className='w-12 h-12'
         src="https://cdn-icons-png.flaticon.com/512/6914/6914292.png" alt="user"/>
@@ -71,8 +71,8 @@ const CommentList = ({comments}) => {
 
 const CommentsContainer = () => {
     return (
-        <div className='m-5 p-2'>
-            <h1 className='text-2xl font-bold'>Comments:</h1>
+        <div className='m-5 p-2 ml-0'>
+            <h1 className='text-2xl font-bold text-white mb-4'>Comments:</h1>
             <CommentList comments={commentsData}/>
         </div>
     )
