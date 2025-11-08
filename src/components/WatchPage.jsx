@@ -5,12 +5,16 @@ import { useSearchParams } from 'react-router-dom'
 import CommentsContainer from './CommentsContainer'
 import LiveChat from './LiveChat'
 import { GOOGLE_API_KEY } from '../utils/constants'
+import { formatCount } from '../utils/helper'
 
 const WatchPage = () => {
 
   const [searchParams] = useSearchParams();
   const [liked, setLiked] = useState(false)
   const [disliked, setDisliked] = useState(false)
+  const [videoData, setVideoData] = useState(null)
+  const [comments, setComments] = useState([])
+  const [isSubscribed, setIsSubscribed] = useState(false);
   // console.log(searchParams.get("v"))
 
   const dispatch = useDispatch()
@@ -22,9 +26,38 @@ const WatchPage = () => {
     };
   }, [dispatch]);
 
-  useEffect(()=>{
-
-  },[])
+  useEffect(() => {
+    const getVideoData = async () => {
+      const videoId = searchParams.get("v")
+      if (!videoId) return
+      try {
+        const response = await fetch(`https://www.googleapis.com/youtube/v3/videos?part=snippet,statistics&id=${videoId}&key=${GOOGLE_API_KEY}`)
+        const data = await response.json();
+        if (data.items && data.items.length > 0) {
+          setVideoData(data.items[0])
+          const channelId = data.items[0].snippet.channelId
+          const channelResponse = await fetch(`https://www.googleapis.com/youtube/v3/channels?part=snippet,statistics&id=${channelId}&key=${GOOGLE_API_KEY}`)
+          const channelData = await channelResponse.json()
+          if (channelData.items && channelData.items.length > 0) {
+            setVideoData(prev => ({
+              ...prev,
+              channelData: channelData.items[0]
+            }))
+            // console.log(channelData.items[0])
+            const commentsResponse = await fetch(`https://www.googleapis.com/youtube/v3/commentThreads?part=snippet&videoId=${videoId}&maxResults=20&key=${GOOGLE_API_KEY}`)
+            const commentsData = await commentsResponse.json()
+            if (commentsData.items) {
+              setComments(commentsData.items)
+            }
+          }
+        }
+      }
+      catch (error) {
+        console.error("Error:", error)
+      }
+    }
+    getVideoData()
+  }, [searchParams])
 
   return (
     <div className='flex flex-col ml-5'>
@@ -40,17 +73,25 @@ const WatchPage = () => {
         </div>
       </div>
       <div className='m-3 w-[1000px]'>
-        <h1 className='text-[20px] font-bold'>Must do Topics for Java Developer | Accenture Interview Experience 2025</h1>
+        <h1 className='text-[20px] font-bold'>{videoData?.snippet?.title || 'Loading...'}</h1>
         <div className='flex justify-between items-center gap-4 mt-2'>
           <div className='flex items-center gap-3'>
             <img
               className='rounded-full h-9'
-              src="https://yt3.ggpht.com/_RkDehlkjpNnK2uPqKBpBZZ6Pxb5p0XCsUIg3psh5sqQlE8mn3fPDHCMcp3oNU0wQiFSYva7Og=s88-c-k-c0x00ffffff-no-rj" alt="channel logo" />
+              src={videoData?.channelData?.snippet?.thumbnails?.default?.url} alt="channel logo" />
             <div className='grid'>
-              <span className='text-[16px] text-white font-medium'>Runtime Error</span>
-              <span className='text-[12px] text-gray-400'>7.9k Subscribers</span>
+              <span className='text-[16px] text-white font-medium'>{videoData?.channelData?.snippet?.title}</span>
+              <span className='text-[12px] text-gray-400'>
+                {videoData?.channelData?.statistics?.subscriberCount ?
+                  `${formatCount(videoData.channelData.statistics.subscriberCount)} subscribers`
+                  : 'Loading...'}</span>
             </div>
-            <button className='bg-white text-black px-3 py-2 rounded-4xl text-[14px] font-medium ml-5'>Subscribe</button>
+            <button
+              onClick={() => setIsSubscribed(!isSubscribed)}
+              className='bg-white text-black px-3 py-2 rounded-full text-[14px] font-medium ml-5'
+            >
+              {isSubscribed ? 'Subscribed' : 'Subscribe'}
+            </button>
           </div>
           <div className='flex items-center gap-4 text-white mr-4'>
             <div className='flex'>
@@ -92,11 +133,19 @@ const WatchPage = () => {
           </div>
         </div>
         <div className='w-[980px] bg-[rgba(39,39,39,1)] rounded-lg text-[14px]'>
-          <p className='mt-3 px-2 py-1'>2,010 views  Nov 2, 2025</p>
-          <p className='p-2'>description</p>
+          <p className='mt-3 px-2 py-1'>{
+            `${formatCount(videoData?.statistics?.viewCount)} views `}
+            {videoData?.snippet?.publishedAt ?
+              new Date(videoData.snippet.publishedAt).toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric'
+              }) : ''}
+          </p>
+          <p className='p-2 h-20 overflow-y-auto'>{videoData?.snippet?.description}</p>
         </div>
       </div>
-      <CommentsContainer />
+      <CommentsContainer comments={comments} />
     </div>
   )
 }

@@ -106,7 +106,7 @@ const Head = () => {
           </div>
 
           {/* If Showsuggestions is true then only show this */}
-          {Showsuggestions && (
+          {Showsuggestions && suggestions.length > 0 &&(
             <div
               className='absolute top-full bg-white text-black py-2 px-5 w-[40rem] rounded-xl shadow-lg border border-gray-200 max-h-96 overflow-y-auto z-[9999]'
             >

@@ -46,7 +46,7 @@ const commentsData = [
 
 const Comment  = ({data}) => {
     const { name, text, replies } = data;
-     return <div className='flex shadow-sm bg-[#1f1f1f] p-3 rounded-lg my-2 text-gray-200'>
+     return <div className='flex shadow-sm bg-gray-900 p-2 w-[990px] rounded-lg my-1 text-gray-200'>
         <img 
         className='w-12 h-12'
         src="https://cdn-icons-png.flaticon.com/512/6914/6914292.png" alt="user"/>
@@ -58,22 +58,33 @@ const Comment  = ({data}) => {
 }
 
 const CommentList = ({comments}) => {
-    // Disclaimer: Don't use indexes as keys
-    return comments.map((comment, index)=> (
-        <div key={index}>
-            <Comment  data={comment}/>
-        <div className='pl-5 border border-l-black ml-5'>
+    return comments.map((comment)=> (
+        <div key={comment.id || comment.name}>
+            <Comment data={comment}/>
+        <div className='pl-5 ml-5'>
             <CommentList comments={comment.replies}/>
         </div>
         </div>
     ))
 }
+const CommentsContainer = ({ comments = [] }) => {
+    const formattedComments = comments.map((comment, index) => ({
+        id: comment.id,
+        name: comment.snippet.topLevelComment.snippet.authorDisplayName,
+        text: comment.snippet.topLevelComment.snippet.textDisplay,
+        replies: [] 
+    }))
 
-const CommentsContainer = () => {
     return (
-        <div className='m-5 p-2 ml-0'>
-            <h1 className='text-2xl font-bold text-white mb-4'>Comments:</h1>
-            <CommentList comments={commentsData}/>
+        <div className='m-0 mt-0 p-2 ml-0'>
+            <h1 className='text-2xl font-bold text-white mb-4'>
+                {comments.length > 0 ? `${comments.length} Comments` : 'Comments'}
+            </h1>
+            {formattedComments.length > 0 ? (
+                <CommentList comments={formattedComments}/>
+            ) : (
+                <p className="bg-black">Loading comments...</p>
+            )}
         </div>
     )
 }
