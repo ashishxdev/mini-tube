@@ -10,6 +10,7 @@ const Head = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [suggestions, setSuggestions] = useState([]);
   const [Showsuggestions, setShowSuggestions] = useState(false);
+
   const searchCache = useSelector((store) => store.search)
   const dispatch = useDispatch()
 
@@ -29,17 +30,25 @@ const Head = () => {
   }, [searchQuery])
 
   const getSearchSuggestions = async () => {
-    // console.log("API CALL - " + searchQuery)
-    const data = await fetch(YOUTUBE_SEARCH_API + searchQuery)
-    const json = await data.json();
-    // console.log(json[1])
-    setSuggestions(json[1])
+    if (!searchQuery.trim()) return;
 
-    // update cache
-    dispatch(cacheResults({
-      [searchQuery]: json[1]
-    }))
-  }
+    try {
+      const data = await fetch(YOUTUBE_SEARCH_API + searchQuery);
+      const json = await data.json();
+
+      // Check if json[1] exists and is an array
+      if (Array.isArray(json[1])) {
+        setSuggestions(json[1]);
+        dispatch(cacheResults({ [searchQuery]: json[1] }));
+      } else {
+        setSuggestions([]);
+      }
+    } catch (err) {
+      console.error("Search suggestion error:", err);
+      setSuggestions([]);
+    }
+  };
+
 
   const toggleMenuHandler = () => {
     dispatch(toggleMenu())
@@ -85,10 +94,10 @@ const Head = () => {
               onFocus={() => searchQuery.length > 0 && setShowSuggestions(true)}
               onBlur={() => setShowSuggestions(false)}
               onKeyDown={(e) => {
-              if (e.key === "Enter") {
-              dispatch(setGlobalSearchQuery(searchQuery));
-              setShowSuggestions(false);
-              }
+                if (e.key === "Enter") {
+                  dispatch(setGlobalSearchQuery(searchQuery));
+                  setShowSuggestions(false);
+                }
               }}
               type="text"
               placeholder='Search'
@@ -106,24 +115,43 @@ const Head = () => {
           </div>
 
           {/* If Showsuggestions is true then only show this */}
-          {Showsuggestions && suggestions.length > 0 &&(
-            <div
-              className='absolute top-full bg-white text-black py-2 px-5 w-[55vw] md:w-[40rem] rounded-xl shadow-lg border border-gray-200 max-h-96 overflow-y-auto z-9999'
-            >
+          {Showsuggestions && suggestions?.length > 0 && (
+            <div className='absolute top-full bg-white text-black py-2 px-5 w-[55vw] md:w-[40rem] rounded-xl shadow-lg border border-gray-200 max-h-96 overflow-y-auto z-9999'>
               <ul>
-                {suggestions.map(s => <li
-                  onMouseDown={(e) => {
-                    e.preventDefault();
-                    setSearchQuery(s);
-                    setShowSuggestions(false);
-                  }}
-                  key={s}
-                  onClick={() => setSearchQuery(s)}
-                  className='py-2 px-3 hover:bg-gray-100 cursor-pointer flex items-center gap-2'>
-                  <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24" focusable="false" aria-hidden="true" className=" pointer-events: none; display: inherit; width: 100%; height: 100%;"><path clipRule="evenodd" d="M16.296 16.996a8 8 0 11.707-.708l3.909 3.91-.707.707-3.909-3.909zM18 11a7 7 0 00-14 0 7 7 0 1014 0z" fillRule="evenodd"></path></svg>
-                  {s}</li>)}
+                {suggestions.map((s) => (
+                  <li
+                    key={s}
+                    onMouseDown={(e) => {
+                      e.preventDefault();
+                      setSearchQuery(s);
+                      setShowSuggestions(false);
+                    }}
+                    onClick={() => setSearchQuery(s)}
+                    className='py-2 px-3 hover:bg-gray-100 cursor-pointer flex items-center gap-2'
+                  >
+                    <svg
+                      xmlns='http://www.w3.org/2000/svg'
+                      height='24'
+                      viewBox='0 0 24 24'
+                      width='24'
+                      focusable='false'
+                      aria-hidden='true'
+                      className='pointer-events-none w-4 h-4'
+                    >
+                      <path
+                        clipRule='evenodd'
+                        fillRule='evenodd'
+                        d='M16.296 16.996a8 8 0 11.707-.708l3.909 3.91-.707.707-3.909-3.909zM18 11a7 7 0 00-14 0 7 7 0 1014 0z'
+                      />
+                    </svg>
+                    {s}
+                  </li>
+                ))}
               </ul>
-            </div>)}
+            </div>
+          )}
+
+
         </div>
       </div>
 
