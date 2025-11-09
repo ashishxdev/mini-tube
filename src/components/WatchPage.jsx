@@ -60,11 +60,11 @@ const WatchPage = () => {
   }, [searchParams])
 
   return (
-    <div className='flex flex-col ml-5'>
-      <div className='flex'>
+    <div className='flex flex-col ml-0 md:ml-5'>
+      <div className='flex flex-col md:flex-row'>
         <div>
           <iframe
-            width="1000" height="500"
+            className='w-full md:w-[1000px] h-[250px] md:h-[500px]'
             src={"https://www.youtube.com/embed/" + searchParams.get("v")}
             title="YouTube video player" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerPolicy="strict-origin-when-cross-origin" allowFullScreen></iframe>
         </div>
@@ -72,38 +72,38 @@ const WatchPage = () => {
           <LiveChat />
         </div>
       </div>
-      <div className='m-3 w-[1000px]'>
-        <h1 className='text-[20px] font-bold'>{videoData?.snippet?.title || 'Loading...'}</h1>
-        <div className='flex justify-between items-center gap-4 mt-2'>
-          <div className='flex items-center gap-3'>
+      <div className='m-3 w-[95vw] md:w-[1000px]'>
+        <h1 className='text-[16px] md:text-[20px] font-bold'>{videoData?.snippet?.title || 'Loading...'}</h1>
+        <div className='flex flex-col md:flex-row md:justify-between items-start md:items-center gap-4 mt-2'>
+          <div className='flex items-center gap-2 md:gap-3'>
             <img
-              className='rounded-full h-9'
+              className='rounded-full h-8 md:h-9'
               src={videoData?.channelData?.snippet?.thumbnails?.default?.url} alt="channel logo" />
             <div className='grid'>
-              <span className='text-[16px] text-white font-medium'>{videoData?.channelData?.snippet?.title}</span>
-              <span className='text-[12px] text-gray-400'>
+              <span className='text-[14px] md:text-[16px] text-white font-medium'>{videoData?.channelData?.snippet?.title}</span>
+              <span className='text-[11px] md:text-[12px] text-gray-400'>
                 {videoData?.channelData?.statistics?.subscriberCount ?
                   `${formatCount(videoData.channelData.statistics.subscriberCount)} subscribers`
                   : 'Loading...'}</span>
             </div>
             <button
               onClick={() => setIsSubscribed(!isSubscribed)}
-              className='bg-white text-black px-3 py-2 rounded-full text-[14px] font-medium ml-5'
+              className='bg-white text-black px-3 py-2 rounded-full text-[12px] md:text-[14px] font-medium ml-2 md:ml-5'
             >
               {isSubscribed ? 'Subscribed' : 'Subscribe'}
             </button>
           </div>
-          <div className='flex items-center gap-4 text-white mr-4'>
+          <div className='flex items-center gap-2 md:gap-4 text-white mr-0 md:mr-4'>
             <div className='flex'>
               <button
                 onClick={() => {
                   setLiked(!liked)
                   if (!liked) setDisliked(false)
                 }}
-                className='bg-[#282828] px-4 py-2 rounded-l-4xl font-bold transition-colors hover:bg-[#3f3f3f]'
+                className='bg-[#282828] px-2 md:px-4 py-1.5 md:py-2 rounded-l-4xl font-bold transition-colors hover:bg-[#3f3f3f]'
               >
                 <img
-                  className="h-6 invert"
+                  className="h-5 md:h-6 invert"
                   src={liked ? "https://cdn-icons-png.flaticon.com/512/739/739231.png" : "https://cdn-icons-png.flaticon.com/512/126/126473.png"}
                   alt="like"
                 />
@@ -113,10 +113,10 @@ const WatchPage = () => {
                   setDisliked(!disliked)
                   if (!disliked) setLiked(false)
                 }}
-                className='bg-[#282828] px-4 py-2 rounded-r-4xl font-bold transition-colors hover:bg-[#3f3f3f]'
+                className='bg-[#282828] px-2 md:px-4 py-1.5 md:py-2 rounded-r-4xl font-bold transition-colors hover:bg-[#3f3f3f]'
               >
                 <img
-                  className="h-6 invert"
+                  className="h-5 md:h-6 invert"
                   src={disliked ? "https://cdn-icons-png.flaticon.com/512/9334/9334003.png" : "https://cdn-icons-png.flaticon.com/512/4466/4466315.png"}
                   alt="dislike"
                 />
@@ -132,8 +132,8 @@ const WatchPage = () => {
             </div>
           </div>
         </div>
-        <div className='w-[980px] bg-[rgba(39,39,39,1)] rounded-lg text-[14px]'>
-          <p className='mt-3 px-2 py-1'>{
+        <div className='w-[95vw] md:w-[980px] bg-[rgba(39,39,39,1)] rounded-lg text-[14px]'>
+          <p className='mt-3 px-2 py-1 text-xs md:text-sm'>{
             `${formatCount(videoData?.statistics?.viewCount)} views `}
             {videoData?.snippet?.publishedAt ?
               new Date(videoData.snippet.publishedAt).toLocaleDateString('en-US', {
@@ -142,7 +142,7 @@ const WatchPage = () => {
                 day: 'numeric'
               }) : ''}
           </p>
-          <p className='p-2 h-20 overflow-y-auto'>{videoData?.snippet?.description}</p>
+          <p className='p-2 h-16 md:h-20 overflow-y-scroll [&::-webkit-scrollbar]:hidden text-xs md:text-sm'>{videoData?.snippet?.description}</p>
         </div>
       </div>
       <CommentsContainer comments={comments} />

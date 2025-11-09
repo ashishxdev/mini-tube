@@ -26,7 +26,7 @@ const VideoContainer = () => {
       : videos
 
   return (
-    <div className='flex flex-wrap'>
+    <div className='grid grid-cols-1 md:flex md:flex-wrap'>
       {filteredVideos.map((video) => (
         <Link key={video.id} to={`/watch?v=${video.id}`}>
           <VideoCard info={video} />
