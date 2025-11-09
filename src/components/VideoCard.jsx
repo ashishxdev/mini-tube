@@ -36,7 +36,7 @@ const VideoCard = ({ info }) => {
   }
 
   return (
-    <div className="p-2 m-auto w-95 shadow-lg rounded-lg hover:bg-gray-700">
+    <div className="p-1 m-auto w-100 shadow-lg rounded-lg hover:bg-gray-700">
       {/* Video Thumbnail */}
       <img className="rounded-lg w-full" src={thumbnails.medium.url} alt="thumbnail" />
 
