@@ -46,7 +46,7 @@ const commentsData = [
 
 const Comment  = ({data}) => {
     const { name, text, replies } = data;
-     return <div className='flex shadow-sm bg-gray-900 p-2 w-full md:w-[990px] rounded-lg my-1 text-gray-200'>
+     return <div className='flex shadow-sm bg-gray-900 p-2 w-[95vw] md:w-[990px] rounded-lg my-1 mx-auto text-gray-200'>
         <img 
         className='w-12 h-12'
         src="https://cdn-icons-png.flaticon.com/512/6914/6914292.png" alt="user"/>
