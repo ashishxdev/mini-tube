@@ -55,7 +55,7 @@ const Head = () => {
   }
   return (
     <div className='grid grid-flow-col px-4 p-1 my-2 mx-auto shadow-lg items-center sticky top-0 w-[98vw] bg-[#0f0f0f] z-50 rounded-lg'>
-      <div className='flex col-span-1 items-center cursor-pointer gap-3 md:gap-3'>
+      <div className='flex col-span-1 items-center cursor-pointer gap-1 md:gap-3'>
         <img
           onClick={() => toggleMenuHandler()}
           className='h-4 md:h-5 invert'
